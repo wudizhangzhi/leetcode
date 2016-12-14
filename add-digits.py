@@ -20,7 +20,15 @@ class Solution(object):
         """
         return num if num<10 else self.addDigits(reduce(lambda x,y:int(x)+int(y) ,list(str(num))))
 
-
+    def addDigits(self, num):
+        """
+        :type num: int
+        :rtype: int
+        """
+        if num==0:
+            return 0
+        else:
+            return (num-1)%9 +1
 
 
 
