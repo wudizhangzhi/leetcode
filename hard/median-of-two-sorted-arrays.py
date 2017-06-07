@@ -27,9 +27,9 @@ B[0], B[1], ..., B[j-1]  |  B[j], B[j+1], ..., B[n-1]
 
 条件:
 1. A[i-1] <= B[j] and B[j-1] <= A[i]
-2. i + j = (m + n)/2
+2. i + j = (m + n + 1)/2
 令 i = 0 ~ min(m, n)
-则 j = (m + n)/2 - i
+则 j = (m + n + 1)/2 - i
 '''
 class Solution(object):
     def findMedianSortedArrays(self, nums1, nums2):
@@ -45,7 +45,7 @@ class Solution(object):
             B , A, n, m = A, B, m, n
         if n<=0:
             raise ValueError
-        imin, imax, half_len = 0, m, (m + n)/2
+        imin, imax, half_len = 0, m, (m + n + 1)/2
         while imin <= imax:
             i = (imin + imax)/2
             j = half_len - i
@@ -58,10 +58,13 @@ class Solution(object):
             else: # 符合条件
                 if i == 0:
                     max_left = B[j-1]
+                    print('max_left=B[j-1], j:%s' % j)
                 elif j == 0:
                     max_left = A[i-1]
+                    print('max_left=A[i-1], i:%s' % i)
                 else:
                     max_left = max(A[i-1], B[j-1])
+                print('max_left: %s' % max_left)
                 if (m+n)%2 == 1: # length of (nums1, nums2) is odd
                     return max_left
                 # length of (nums1, nums2) is even
@@ -71,6 +74,7 @@ class Solution(object):
                     min_right = A[i]
                 else:
                     min_right = min(A[i], B[j])
+                print('max_right: %s' % max_right)
                 return (max_left + min_right) / 2.0
 
 
@@ -79,8 +83,8 @@ class Solution(object):
 
 
 if __name__ == '__main__':
-    nums1 = [1, 2]
-    nums2 = [3, 4, 5, 6, 7, 8]
+    nums1 = [1, 3]
+    nums2 = [2]
 
     sol = Solution()
     result = sol.findMedianSortedArrays(nums1, nums2)
