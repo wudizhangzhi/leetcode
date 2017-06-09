@@ -1,6 +1,6 @@
 #coding=utf8
 '''
-求取最大子序列
+求取最长公共子序列问题(longest-common-subsquence problem)
 '''
 import numpy as np
 import random
@@ -92,5 +92,5 @@ if __name__ == '__main__':
     print(lcs)
     lcs = print_lcs_v2(c, x, len(x)-1, len(y)-1)
     print(lcs)
-    
+
     test(1000)
