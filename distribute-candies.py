@@ -38,7 +38,7 @@ class Solution(object):
         :type candies: List[int]
         :rtype: int
         """
-        return min(len(candies), len(set(candies)))
+        return min(len(candies)/2, len(set(candies)))
 
 if __name__ =='__main__':
     candies = [1,1,2,3]
