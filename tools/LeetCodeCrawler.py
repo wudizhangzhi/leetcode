@@ -1,4 +1,4 @@
-# coding = utf8
+# coding=utf8
 
 import requests
 import argparse
@@ -100,17 +100,18 @@ class LeetCodeCrawler:
         urls = kwargs.pop('url')
         if not urls:
             # TODO random leetcode
-            pass
-        for url in urls:
-            self.crawl_from_url(url, **kwargs)
+            return
+        else:
+            for url in urls:
+                self.crawl_from_url(url, **kwargs)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""www.leetcode.com crawler""")
     parser.add_argument('-u', '--url', type=str, help='url of leetcode problem', nargs='*', default=None)
-    parser.add_argument('-l', '--language', type=str, default="python", help='code language')
-    parser.add_argument('-d', '--difficulity', type=str, default="medium", help='problem difficulity')
-    parser.add_argument('-f', '--findanswer', type=bool, default=False, help='whether find answer')
+    parser.add_argument('-l', '--language', type=str, default="python", metavar='lang', help=u'语言 code language')
+    parser.add_argument('-d', '--difficulity', type=str, default="medium", help=u'难度 problem difficulity ')
+    parser.add_argument('-f', '--findanswer', type=bool, default=False, help=u'是否找答案 whether find answer')
     args = parser.parse_args()
     lcc = LeetCodeCrawler()
     print(args)
