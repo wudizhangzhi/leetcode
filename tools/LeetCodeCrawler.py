@@ -137,7 +137,7 @@ class LeetCodeCrawler:
         root = etree.HTML(res.text)
         # 难度
         difficulty = root.xpath('//span[contains(@class, "difficulty-label")]/text()')
-        difficulty = difficulty[0] if difficulty else 'easy'
+        difficulty = difficulty[0].lower() if difficulty else 'easy'
 
         question_descrition_list = root.xpath('//div[@class="question-description"]//text()')
         if len(question_descrition_list) == 0:
@@ -152,7 +152,11 @@ class LeetCodeCrawler:
         codeDefinition = pageDataDict['codeDefinition']
         code_def = [i['defaultCode'] for i in codeDefinition if i['text'].lower() == kwargs.get('language')]
         code_def = code_def[0] if code_def else ''
-        create_leetcode_exercise(pageDataDict['questionTitleSlug'], question_descrition, code_def)
+        create_leetcode_exercise(pageDataDict['questionTitleSlug'],
+                                 question_descrition,
+                                 code_def,
+                                 difficulty=difficulty,
+                                 language=kwargs.get('language'))
 
     def crawl(self, **kwargs):
         urls = kwargs.pop('url')
