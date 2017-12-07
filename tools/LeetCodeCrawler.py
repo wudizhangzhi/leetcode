@@ -4,8 +4,16 @@ import requests
 import argparse
 from lxml import etree
 from user_agent import generate_user_agent
+import os
 import re
 import json
+from random import choice
+
+LEVEL_DICT = {1: 'easy', 2: 'medium', 3: 'hard'}
+TOP_ELEMENT = u'-'
+LEFT_ELEMENT = u'|'
+
+FILE_SUFFIX_DICT = {'python': 'py'}
 
 
 def clear_pagedate_value(value):
@@ -51,21 +59,37 @@ def clear_pagedata(pagedata):
     return result
 
 
-def create_leetcode_exercise(name, description, codeDefinition, language='python'):
+def create_leetcode_exercise(name, description, codeDefinition, difficulty='easy', language='python'):
     content = []
     if language.lower() == 'python':
         content.append('# coding = utf8')
         content.append('"""%s"""' % description)
         content.append(codeDefinition)
         content.extend(['', 'if __name__ == "__main__":', '    inputs = ""', '    sol = Solution()'])
-        filename = name + '.py'
-
-    with open(filename, 'wb') as f:
+        filename = name + '.' + FILE_SUFFIX_DICT[language]
+        filefullpath = os.path.join(difficulty, filename)
+    if not os.path.exists(difficulty):
+        os.mkdir(difficulty)
+    with open(filefullpath, 'wb') as f:
         for c in content:
             # if isinstance(c, str):
             c = c.decode('unicode_escape')
             f.write(c + '\n')
-    print('create success: %s' % filename)
+    print('create success: %s' % filefullpath)
+
+
+def printcontents(contents):
+    max_length = len(max(contents, key=lambda x: len(x)))
+    show_list_after = []
+
+    top_line = TOP_ELEMENT * (max_length + 2)
+    show_list_after.append(top_line)
+    for line in contents:
+        line = '%s%s%s%s' % (LEFT_ELEMENT, line, ' ' * (max_length - len(line)), LEFT_ELEMENT)
+        show_list_after.extend([line, top_line])
+    for line in show_list_after:
+        print(line)
+    print('')
 
 
 class LeetCodeCrawler:
@@ -77,10 +101,44 @@ class LeetCodeCrawler:
         self.sess.headers.update(headers)
         self.timeout = 5
 
+    def fetch_all_problem(self):
+        top_element = u'-'
+        left_element = u'|'
+
+        url_api = 'https://leetcode.com/api/problems/all/'
+        r = self.sess.get(url_api, timeout=self.timeout)
+        j = json.loads(r.text)
+        # 打印信息
+        keys_show = [u'ac_easy', u'category_slug', u'is_paid', u'frequency_high', u'frequency_mid', u'ac_medium',
+                     u'num_solved', u'ac_hard', u'user_name', u'num_total']
+
+        show_list = ['%s: %s' % (key, j[key]) for key in keys_show if key in j]
+        printcontents(show_list)
+        return j[u'stat_status_pairs']
+
+    def choice_one(self, problems, language='python'):
+        problem = choice(problems)
+        level = problem['difficulty']['level']
+        level_dirname = LEVEL_DICT[level]
+        question__title_slug = problem['stat']['question__title_slug']
+        filefullpath = os.path.join(level_dirname, '%s.%s' % (question__title_slug, FILE_SUFFIX_DICT[language]))
+        if os.path.exists(filefullpath):
+            self.choice_one(problems, language)
+        # 打印信息
+        keys = [u'question_id', u'question__title', u'total_acs', u'total_submitted', u'is_new_question']
+        contents = ['%s: %s' % (key, problem['stat'][key]) for key in keys if key in problem['stat']]
+        contents.append('difficulty: %s' % level_dirname)
+        printcontents(contents)
+        return problem
+
     def crawl_from_url(self, url, **kwargs):
         # name = url.split('problems')[-1].split('/')[0]
         res = self.sess.get(url, timeout=self.timeout)
         root = etree.HTML(res.text)
+        # 难度
+        difficulty = root.xpath('//span[contains(@class, "difficulty-label")]/text()')
+        difficulty = difficulty[0] if difficulty else 'easy'
+
         question_descrition_list = root.xpath('//div[@class="question-description"]//text()')
         if len(question_descrition_list) == 0:
             return False
@@ -100,7 +158,9 @@ class LeetCodeCrawler:
         urls = kwargs.pop('url')
         if not urls:
             # TODO random leetcode
-            return
+            problem = self.choice_one(self.fetch_all_problem())
+            url_problem = 'https://leetcode.com/problems/%s' % problem['stat']['question__title_slug']
+            self.crawl_from_url(url_problem, **kwargs)
         else:
             for url in urls:
                 self.crawl_from_url(url, **kwargs)
@@ -111,8 +171,7 @@ if __name__ == "__main__":
     parser.add_argument('-u', '--url', type=str, help='url of leetcode problem', nargs='*', default=None)
     parser.add_argument('-l', '--language', type=str, default="python", metavar='lang', help=u'语言 code language')
     parser.add_argument('-d', '--difficulity', type=str, default="medium", help=u'难度 problem difficulity ')
-    parser.add_argument('-f', '--findanswer', type=bool, default=False, help=u'是否找答案 whether find answer')
+    parser.add_argument('-a', '--answer', type=bool, default=False, help=u'是否找答案 whether find answer')
     args = parser.parse_args()
     lcc = LeetCodeCrawler()
-    print(args)
     lcc.crawl(**args.__dict__)
