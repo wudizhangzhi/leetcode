@@ -1,6 +1,7 @@
 # coding=utf8
 
 import requests
+import functools
 import argparse
 from lxml import etree
 from user_agent import generate_user_agent
@@ -73,8 +74,12 @@ def create_leetcode_exercise(name, description, codeDefinition, difficulty='easy
     with open(filefullpath, 'wb') as f:
         for c in content:
             # if isinstance(c, str):
-            c = c.decode('unicode_escape')
-            f.write(c + '\n')
+            # TODO python3
+            try:
+                c = c.decode('unicode_escape', 'ignore')
+                f.write(c + '\n')
+            except UnicodeEncodeError:
+                print('error: ', c)
     print('create success: %s' % filefullpath)
 
 
@@ -92,6 +97,32 @@ def printcontents(contents):
     print('')
 
 
+class CrawlException(Exception): pass
+
+
+def retry(count=3):
+    def deco(func):
+        global timeout_count
+        timeout_count = 0
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            global timeout_count
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if timeout_count < count:
+                    timeout_count += 1
+                    print(u'失败第 %s 次, 错误:%r, 开始重试' % (e, timeout_count))
+                    return wrapper(*args, **kwargs)
+                else:
+                    print(u'超过最大重试次数 %s 次, 结束' % count)
+
+        return wrapper
+
+    return deco
+
+
 class LeetCodeCrawler:
     def __init__(self):
         headers = {
@@ -102,9 +133,6 @@ class LeetCodeCrawler:
         self.timeout = 5
 
     def fetch_all_problem(self):
-        top_element = u'-'
-        left_element = u'|'
-
         url_api = 'https://leetcode.com/api/problems/all/'
         r = self.sess.get(url_api, timeout=self.timeout)
         j = json.loads(r.text)
@@ -123,6 +151,7 @@ class LeetCodeCrawler:
         question__title_slug = problem['stat']['question__title_slug']
         filefullpath = os.path.join(level_dirname, '%s.%s' % (question__title_slug, FILE_SUFFIX_DICT[language]))
         if os.path.exists(filefullpath):
+            print(u'已经存在,重新获取...')
             self.choice_one(problems, language)
         # 打印信息
         keys = [u'question_id', u'question__title', u'total_acs', u'total_submitted', u'is_new_question']
@@ -131,6 +160,7 @@ class LeetCodeCrawler:
         printcontents(contents)
         return problem
 
+    @retry(count=3)
     def crawl_from_url(self, url, **kwargs):
         # name = url.split('problems')[-1].split('/')[0]
         res = self.sess.get(url, timeout=self.timeout)
@@ -141,7 +171,7 @@ class LeetCodeCrawler:
 
         question_descrition_list = root.xpath('//div[@class="question-description"]//text()')
         if len(question_descrition_list) == 0:
-            return False
+            raise CrawlException(u'找不到问题描述')
         question_descrition = ''.join(question_descrition_list)
 
         # find config in script
@@ -161,7 +191,7 @@ class LeetCodeCrawler:
     def crawl(self, **kwargs):
         urls = kwargs.pop('url')
         if not urls:
-            # TODO random leetcode
+            # random leetcode
             problem = self.choice_one(self.fetch_all_problem())
             url_problem = 'https://leetcode.com/problems/%s' % problem['stat']['question__title_slug']
             self.crawl_from_url(url_problem, **kwargs)
