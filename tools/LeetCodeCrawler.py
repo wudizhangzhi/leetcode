@@ -9,6 +9,7 @@ import os
 import re
 import json
 from random import choice
+import codecs
 
 LEVEL_DICT = {1: 'easy', 2: 'medium', 3: 'hard'}
 TOP_ELEMENT = u'-'
@@ -71,15 +72,16 @@ def create_leetcode_exercise(name, description, codeDefinition, difficulty='easy
         filefullpath = os.path.join(difficulty, filename)
     if not os.path.exists(difficulty):
         os.mkdir(difficulty)
-    with open(filefullpath, 'wb') as f:
+    with codecs.open(filefullpath, 'w', encoding='utf8') as f:
         for c in content:
             # if isinstance(c, str):
             # TODO python3
             try:
-                c = c.decode('unicode_escape', 'ignore')
-                f.write(c + '\n')
-            except UnicodeEncodeError:
+                # c = c.decode('unicode_escape', 'ignore')
+                f.write(c + u'\n')
+            except UnicodeEncodeError as e:
                 print('error: ', c)
+                print(e)
     print('create success: %s' % filefullpath)
 
 
@@ -113,7 +115,7 @@ def retry(count=3):
             except Exception as e:
                 if timeout_count < count:
                     timeout_count += 1
-                    print(u'失败第 %s 次, 错误:%r, 开始重试' % (e, timeout_count))
+                    print(u'失败第 %s 次, 错误: %s, 开始重试' % (timeout_count, e.message))
                     return wrapper(*args, **kwargs)
                 else:
                     print(u'超过最大重试次数 %s 次, 结束' % count)
@@ -144,15 +146,19 @@ class LeetCodeCrawler:
         printcontents(show_list)
         return j[u'stat_status_pairs']
 
-    def choice_one(self, problems, language='python'):
-        problem = choice(problems)
+    def choice_one(self, problems, **kwargs):
+        language = kwargs.get('language', 'python')
+        difficulty = kwargs.get('difficulty', '')
+        problems_filted = [problem for problem in problems if
+                           not difficulty or difficulty == LEVEL_DICT.get(problem['difficulty']['level'], '')]
+        problem = choice(problems_filted)
         level = problem['difficulty']['level']
         level_dirname = LEVEL_DICT[level]
         question__title_slug = problem['stat']['question__title_slug']
         filefullpath = os.path.join(level_dirname, '%s.%s' % (question__title_slug, FILE_SUFFIX_DICT[language]))
         if os.path.exists(filefullpath):
             print(u'已经存在,重新获取...')
-            self.choice_one(problems, language)
+            self.choice_one(problems, **kwargs)
         # 打印信息
         keys = [u'question_id', u'question__title', u'total_acs', u'total_submitted', u'is_new_question']
         contents = ['%s: %s' % (key, problem['stat'][key]) for key in keys if key in problem['stat']]
@@ -192,8 +198,9 @@ class LeetCodeCrawler:
         urls = kwargs.pop('url')
         if not urls:
             # random leetcode
-            problem = self.choice_one(self.fetch_all_problem())
+            problem = self.choice_one(self.fetch_all_problem(), **kwargs)
             url_problem = 'https://leetcode.com/problems/%s' % problem['stat']['question__title_slug']
+            print(url_problem)
             self.crawl_from_url(url_problem, **kwargs)
         else:
             for url in urls:
@@ -204,7 +211,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""www.leetcode.com crawler""")
     parser.add_argument('-u', '--url', type=str, help='url of leetcode problem', nargs='*', default=None)
     parser.add_argument('-l', '--language', type=str, default="python", metavar='lang', help=u'语言 code language')
-    parser.add_argument('-d', '--difficulity', type=str, default="medium", help=u'难度 problem difficulity ')
+    parser.add_argument('-d', '--difficulty', type=str,
+                        help=u'难度 problem difficulty : %s' % ', '.join(LEVEL_DICT.values()))
     parser.add_argument('-a', '--answer', type=bool, default=False, help=u'是否找答案 whether find answer')
     args = parser.parse_args()
     lcc = LeetCodeCrawler()
