@@ -125,7 +125,7 @@ def retry(count=3):
     return deco
 
 
-class LeetCodeCrawler:
+class LeetCodeCrawlerObject:
     def __init__(self):
         headers = {
             'User-Agent': generate_user_agent(os=('mac', 'linux')),
@@ -215,5 +215,5 @@ if __name__ == "__main__":
                         help=u'难度 problem difficulty : %s' % ', '.join(LEVEL_DICT.values()))
     parser.add_argument('-a', '--answer', type=bool, default=False, help=u'是否找答案 whether find answer')
     args = parser.parse_args()
-    lcc = LeetCodeCrawler()
+    lcc = LeetCodeCrawlerObject()
     lcc.crawl(**args.__dict__)
