@@ -210,10 +210,11 @@ class LeetCodeCrawlerObject:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""www.leetcode.com crawler""")
     parser.add_argument('-u', '--url', type=str, help='url of leetcode problem', nargs='*', default=None)
-    parser.add_argument('-l', '--language', type=str, default="python", metavar='lang', help=u'语言 code language')
+    parser.add_argument('-l', '--language', type=str, default="python", metavar='lang',
+                        help=u'语言 code language: %s' % FILE_SUFFIX_DICT.keys())
     parser.add_argument('-d', '--difficulty', type=str,
                         help=u'难度 problem difficulty : %s' % ', '.join(LEVEL_DICT.values()))
-    parser.add_argument('-a', '--answer', type=bool, default=False, help=u'是否找答案 whether find answer')
+    parser.add_argument('-a', '--answer', type=bool, default=False, help=u'是否找答案 whether find answer(TODO)')
     args = parser.parse_args()
     lcc = LeetCodeCrawlerObject()
     lcc.crawl(**args.__dict__)
