@@ -1,4 +1,5 @@
 dist
+LeetCodeCrawler.egg-info
 MANIFEST
 *.pyc
 .DS_Store
