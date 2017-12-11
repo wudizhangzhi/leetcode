@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='LeetCodeCrawler',
-    packages=find_packages(),
+    packages=find_packages(exclude=('easy', 'medium', 'hard')),
     # packages=['LeetCodeCrawler'],
     # packages = os.listdir('tools'),
     version='0.1.4',  # Ideally should be same as your GitHub release tag varsion
