@@ -15,7 +15,7 @@ LEVEL_DICT = {1: 'easy', 2: 'medium', 3: 'hard'}
 TOP_ELEMENT = u'-'
 LEFT_ELEMENT = u'|'
 
-FILE_SUFFIX_DICT = {'python': 'py'}
+FILE_SUFFIX_DICT = {'python': 'py', 'javascript': 'js'}
 
 
 def clear_pagedate_value(value):
@@ -68,8 +68,12 @@ def create_leetcode_exercise(name, description, codeDefinition, difficulty='easy
         content.append('"""%s"""' % description)
         content.append(codeDefinition)
         content.extend(['', 'if __name__ == "__main__":', '    inputs = ""', '    sol = Solution()'])
-        filename = name + '.' + FILE_SUFFIX_DICT[language]
-        filefullpath = os.path.join(difficulty, filename)
+    else:
+        content.append('"""%s"""' % description)
+        content.append(codeDefinition)
+
+    filename = name + '.' + FILE_SUFFIX_DICT[language]
+    filefullpath = os.path.join(difficulty, filename)
     if not os.path.exists(difficulty):
         os.mkdir(difficulty)
     with codecs.open(filefullpath, 'w', encoding='utf8') as f:
