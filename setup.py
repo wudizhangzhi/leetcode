@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='LeetCodeCrawler',
-    packages=['tools'],
+    packages=['LeetCodeCrawler'],
     # packages = os.listdir('tools'),
     version='0.1.1',  # Ideally should be same as your GitHub release tag varsion
     description='A LeetCode Crawler',
