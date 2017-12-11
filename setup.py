@@ -6,12 +6,12 @@ setup(
     name='LeetCodeCrawler',
     packages=['LeetCodeCrawler'],
     # packages = os.listdir('tools'),
-    version='0.1.1',  # Ideally should be same as your GitHub release tag varsion
+    version='0.1.2',  # Ideally should be same as your GitHub release tag varsion
     description='A LeetCode Crawler',
     author='wudizhangzhi',
     author_email='554330595@qq.com',
     url='https://github.com/wudizhangzhi/leetcode',
-    download_url='https://github.com/wudizhangzhi/leetcode/archive/0.1.1.tar.gz',
+    download_url='https://github.com/wudizhangzhi/leetcode/archive/0.1.2.tar.gz',
     keywords=['leetcode', 'crawler'],
     install_requires=['requests>=2.18.4',
                       'lxml>=3.7.3',
