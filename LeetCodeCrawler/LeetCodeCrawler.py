@@ -207,7 +207,7 @@ class LeetCodeCrawlerObject:
                 self.crawl_from_url(url, **kwargs)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="""www.leetcode.com crawler""")
     parser.add_argument('-u', '--url', type=str, help='url of leetcode problem', nargs='*', default=None)
     parser.add_argument('-l', '--language', type=str, default="python", metavar='lang',
@@ -218,3 +218,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     lcc = LeetCodeCrawlerObject()
     lcc.crawl(**args.__dict__)
+
+
+if __name__ == "__main__":
+    main()
