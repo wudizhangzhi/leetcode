@@ -1,8 +1,8 @@
 # LeetCode execrise and some small tools
 
-there should be some describe.
+there should be some descriptions.
 
-##environment
+## environment
 * python2
 * python3
 

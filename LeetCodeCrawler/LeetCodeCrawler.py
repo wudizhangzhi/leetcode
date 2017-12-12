@@ -71,7 +71,6 @@ def create_leetcode_exercise(name, description, codeDefinition, difficulty='easy
     else:
         content.append('"""%s"""' % description)
         content.append(codeDefinition)
-
     filename = name + '.' + FILE_SUFFIX_DICT[language]
     filefullpath = os.path.join(difficulty, filename)
     if not os.path.exists(difficulty):
@@ -103,7 +102,9 @@ def printcontents(contents):
     print('')
 
 
-class CrawlException(Exception): pass
+class CrawlException(Exception):
+    def __init__(self, message):
+        self.message = message
 
 
 def retry(count=3):
