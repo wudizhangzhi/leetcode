@@ -10,7 +10,7 @@ there should be some descriptions.
 ```shell
 pip install LeetCodeCrawler
 ```
-
+![example1](images/leetcode_example.gif)
 
 ## How to Use
 ```shell
