@@ -2,6 +2,7 @@
 
 there should be some descriptions.
 
+
 ## environment
 * python2
 * python3
@@ -10,15 +11,18 @@ there should be some descriptions.
 ```shell
 pip install LeetCodeCrawler
 ```
-![example1](images/leetcode_example.gif)
 
 ## How to Use
 ```shell
 LeetCodeCrawler -h
 
-LeetCodeCrawler -l python
-```
+# random problem
+LeetCodeCrawler
 
+#specific language and difficulty
+LeetCodeCrawler -l python -d medium
+```
+![example1](images/leetcode_example.gif)
 
 ## TODO
 - [ ] crawl answer
