@@ -10,8 +10,8 @@ def export_x_y(num_x, num_y):
     生成2个随机的序列
     '''
     letters = 'ABCD'
-    x = [random.choice(list(letters)) for _ in xrange(num_x)]
-    y = [random.choice(list(letters)) for _ in xrange(num_y)]
+    x = [random.choice(list(letters)) for _ in range(num_x)]
+    y = [random.choice(list(letters)) for _ in range(num_y)]
     return x, y
 
 
@@ -20,8 +20,8 @@ def lcs_length(x, y):
     length_y = len(y)
     c = np.zeros((length_x, length_y))
     b = c.copy()
-    for i in xrange(1, length_x):
-        for j in xrange(1, length_y):
+    for i in range(1, length_x):
+        for j in range(1, length_y):
             if x[i] == y[j]:
                 c[i][j] = c[i-1][j-1] + 1
                 b[i][j] = ord('\\')
@@ -69,7 +69,7 @@ def print_lcs_v2(c, x, i, j):
 def test(count):
     fail = 0
     success = 0
-    for i in xrange(count):
+    for i in range(count):
         x, y = export_x_y(11, 10)
         c, b = lcs_length(x, y)
         lcs = print_lcs(b, x, len(x)-1, len(y)-1)

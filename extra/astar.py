@@ -4,7 +4,7 @@ import numpy as np
 def A_Star(m, start, end):
     """A*搜索算法
     https://en.wikipedia.org/wiki/A*_search_algorithm
-    
+
     Arg:
         m: map
         start: start point
@@ -94,14 +94,12 @@ def A_Star(m, start, end):
                 open_set.append(neighbor)
 
             tentative_gScore = gScore[current] + distance_between(current, neighbor)
-            if tentative_gScore > gScore.get(neighbor, 99999):
-                continue
+            # if tentative_gScore > gScore.get(neighbor, 99999):
+            #     continue
 
             comeFrom[neighbor] = current
             gScore[neighbor] = tentative_gScore
             fScore[neighbor] = gScore[neighbor] + heuristic_cost_estimate(neighbor, end)
-
-    return
 
 
 def generate_map():
@@ -122,3 +120,6 @@ if __name__ == '__main__':
     end = (5, 8)
     total_path = A_Star(m, start, end)
     print(total_path)
+    for p in total_path:
+        m[p[0], p[1]] = '9'
+    print(m)
