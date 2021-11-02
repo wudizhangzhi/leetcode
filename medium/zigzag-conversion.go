@@ -1,36 +1,37 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
+/*
+示例：numRows = 4
+0P       6I        12N
+1A    5L 7S    11I 13G
+2Y 4A    8H 10R
+3P       9I
+
+
+每行的端点之间的距离是: 2*numRows - 2
+除了第一行和最后一行：两个端点之间还有一个点，距前一个端点 2*nunRows-2 -row
+*/
 func convert(s string, numRows int) string {
 	if numRows == 1 {
 		return s
 	}
+	var b strings.Builder
 	length := len(s)
-	result := ""
-	var pos, dif, sum int
-	col, row := 0, 0
-	for len(result) != length {
-		result += string(s[pos])
-		if row == 0 || row == numRows-1 { // 首行、末行
-			dif = (numRows - 1) * 2
-		} else if col%2 == 0 { // 偶数列
-			dif = (numRows - 1 - row) * 2
-		} else { // 奇数列
-			dif = row * 2
+	cycle := 2*numRows - 2
+	for i := 0; i < numRows; i++ { // 每行
+		for j := 0; i+j < length; j += cycle { // 每个端点
+			b.WriteByte(s[i+j])
+			if i != 0 && i != numRows-1 && j+cycle-i < length { // 不是第一行，不是最后一行，且不超过长度
+				b.WriteByte(s[j+cycle-i])
+			}
 		}
-		sum = pos + dif
-		if sum/length > 0 {
-			col = 0
-			row++
-			pos = row
-			continue
-		} else {
-			col++
-		}
-		pos = sum % length
 	}
-	return result
+	return b.String()
 }
 
 func main() {

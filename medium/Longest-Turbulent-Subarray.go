@@ -38,15 +38,15 @@ arr[k] < arr[k + 1] when k is odd.
 */
 func maxTurbulenceSize(arr []int) int {
 	N := len(arr)
-	anchor := 0
-	ans := 1
+	anchor := 0 // 锚点
+	ans := 1    // 起码是1
 	for i := 1; i < N; i++ {
 		c := cmp(arr[i-1], arr[i])
 		if c == 0 {
 			anchor = i
-		} else if i == N-1 || c*cmp(arr[i], arr[i+1]) != -1 {
-			ans = max(ans, i-anchor+1)
-			anchor = i
+		} else if i == N-1 || c*cmp(arr[i], arr[i+1]) != -1 { // 最后一个 或者 两边趋势不对（应该一增一减）
+			ans = max(ans, i-anchor+1) // 最大值是当前到锚点的个数
+			anchor = i                 // 重订锚点
 		}
 	}
 	return ans
