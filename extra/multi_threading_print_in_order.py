@@ -18,6 +18,7 @@ def worker(tid:int):
             Lock_list[(tid+1)%10] = True
 
 def print_in_order():
+    global Lock_list
     for i in range(10):
         # l = threading.Lock()
         # # l.acquire(blocking=False)
@@ -26,7 +27,6 @@ def print_in_order():
             Lock_list.append(True)
         else:
             Lock_list.append(False)
-
     pool = []
     for i in range(10):
         t = threading.Thread(
@@ -36,11 +36,10 @@ def print_in_order():
             }
         )
         pool.append(t)
+        t.start()
 
     for t in pool:
-        t.start()
         t.join()
-    
 
 if __name__ == "__main__":
     print_in_order()
