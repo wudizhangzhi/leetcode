@@ -18,13 +18,15 @@ func print(gid int, m map[int]chan int) {
 	nextChan := m[(gid+1)%10]
 	for IsRunning {
 		select {
-		case i := <-curChan:
-			fmt.Println(fmt.Sprintf("%d   goroutine id=%d", i, gid))
-			i++
-			if i > 10000 {
-				IsRunning = false
-			} else {
-				nextChan <- i
+		case i, ok := <-curChan:
+			if ok {
+				fmt.Println(fmt.Sprintf("%d   goroutine id=%d", i, gid))
+				i++
+				if i > 10000 {
+					IsRunning = false
+				} else {
+					nextChan <- i
+				}
 			}
 		}
 	}
@@ -46,14 +48,14 @@ func printInOrder() {
 	firstChan := memo[0]
 	firstChan <- 0
 	for IsRunning {
-		time.Sleep(time.Millisecond)
+		// time.Sleep(time.Millisecond)
 	}
-	// defer func() {
-	// 	for k, c := range memo {
-	// 		fmt.Printf("关闭: %d\n", k)
-	// 		close(c)
-	// 	}
-	// }()
+	defer func() {
+		for k, c := range memo {
+			fmt.Printf("关闭: %d\n", k)
+			close(c)
+		}
+	}()
 }
 
 func main() {
