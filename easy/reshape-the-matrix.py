@@ -34,6 +34,7 @@ The height and width of the given matrix is in range [1, 100].
 The given r and c are all positive.
 """
 
+
 class Solution(object):
     def matrixReshape(self, nums, r, c):
         """
@@ -48,24 +49,21 @@ class Solution(object):
         tuples = zip(*([iter(flat)] * c))
         return map(list, tuples)
 
-    def matrixReshape2(self, nums, r, c):
-        """
-        :type nums: List[List[int]]
-        :type r: int
-        :type c: int
-        :rtype: List[List[int]]
-        """
-        import itertools
-        it = itertools.chain(*nums)
-        return [list(itertools.islice(it, c)) for _ in xrange(r)]
+    def matrixReshape(self, mat: List[List[int]], r: int, c: int) -> List[List[int]]:
+        _r, _c = len(mat), len(mat[0])
+        if _r * _c != r * c:
+            return mat
+        it = itertools.chain(*mat)
+        return [list(itertools.islice(it, c)) for _ in range(r)]
 
-if __name__ == '__main__':
-    nums = [[1, 2],[3, 4]]
+
+if __name__ == "__main__":
+    nums = [[1, 2], [3, 4]]
     r = 1
     c = 4
 
     sol = Solution()
-    result = sol.matrixReshape(nums, r, c)
-    print result
-    result = sol.matrixReshape2(nums, r, c)
-    print result
+    # result = sol.matrixReshape(nums, r, c)
+    # print result
+    # result = sol.matrixReshape2(nums, r, c)
+    # print result

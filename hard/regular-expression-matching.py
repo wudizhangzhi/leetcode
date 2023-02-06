@@ -134,8 +134,8 @@ class Solution(object):
 
 
 if __name__ == '__main__':
-    s = 'aab'
-    p = 'c*a*b'
+    s = 'aabcacacaca'
+    p = 'a.*'
     sol = Solution()
     result = sol.isMatch2(s, p)
     print(result)

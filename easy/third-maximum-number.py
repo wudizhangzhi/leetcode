@@ -30,15 +30,37 @@ Both numbers with value 2 are both considered as second maximum.
 
 
       """
+
+
 class Solution(object):
-    def thirdMax(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: int
-        """
-        formated = sorted(list(set(nums)), reverse=True)
-        return formated[2] if len(formated) >=3 else formated[0]
+    # def thirdMax(self, nums):
+    #     """
+    #     :type nums: List[int]
+    #     :rtype: int
+    #     """
+    #     formated = sorted(list(set(nums)), reverse=True)
+    #     return formated[2] if len(formated) >=3 else formated[0]
+
+    def thridMax(self, nums):
+        first = float("-inf")
+        second = float("-inf")
+        third = float("-inf")
+        for num in nums:
+            if num > first:
+                second, third = first, second
+                first = num
+            elif first > num > second:
+                second, third = num, second
+            elif second > num > third:
+                third = num
+        if third == float("-inf"):
+            return first
+        return third
+
 
 if __name__ == "__main__":
     inputs = ""
     sol = Solution()
+    print(sol.thridMax([3, 2, 1]))
+    print(sol.thridMax([1, 2]))
+    print(sol.thridMax([2, 2, 3, 1]))
